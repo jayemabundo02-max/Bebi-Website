@@ -1,0 +1,17 @@
+{
+  "name": "bebi-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Private MERN relationship memory archive for songs, messages, gallery photos, memories, and milestones.",
+  "scripts": {
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "npm --prefix server run dev",
+    "build": "npm --prefix client run build",
+    "lint": "npm --prefix client run lint && npm --prefix server run lint",
+    "typecheck": "npm --prefix client run typecheck && npm --prefix server run typecheck",
+    "install:all": "npm install --prefix client && npm install --prefix server"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  }
+}

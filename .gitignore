@@ -1,3 +1,6 @@
 node_modules
 dist
 .env
+server/uploads
+client/.env.local
+server/.env.local
