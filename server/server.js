@@ -27,6 +27,28 @@ const allowedOrigins = new Set([
   "http://127.0.0.1:5173"
 ]);
 
+const isAllowedDevOrigin = (origin) => {
+  if (process.env.NODE_ENV === "production") {
+    return false;
+  }
+
+  try {
+    const url = new URL(origin);
+    const isVitePort = url.port === "5173";
+    const isLocalHost =
+      url.hostname === "localhost" ||
+      url.hostname === "127.0.0.1" ||
+      url.hostname === "::1" ||
+      /^192\.168\./.test(url.hostname) ||
+      /^10\./.test(url.hostname) ||
+      /^172\.(1[6-9]|2\d|3[0-1])\./.test(url.hostname);
+
+    return isVitePort && isLocalHost;
+  } catch {
+    return false;
+  }
+};
+
 if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
   throw new Error("JWT_SECRET must be configured in production.");
 }
@@ -40,7 +62,7 @@ if (process.env.NODE_ENV === "production") {
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.has(origin)) {
+      if (!origin || allowedOrigins.has(origin) || isAllowedDevOrigin(origin)) {
         callback(null, true);
         return;
       }
