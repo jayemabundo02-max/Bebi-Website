@@ -17,3 +17,7 @@ export const sendPushNotification = async (notification) => {
 
   return { skipped: false, channel: "push" };
 };
+export const publishPushNotification = async ({ title, message }) => {
+  console.log(`Push notification event: ${title} - ${message}`);
+  return { published: true };
+};

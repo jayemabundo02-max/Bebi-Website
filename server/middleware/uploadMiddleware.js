@@ -1,62 +1,69 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import multer from "multer";
-import { HttpError } from "../utils/httpError.js";
+import { fileURLToPath } from "url";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-export const uploadRoot = path.resolve(__dirname, "..", "uploads");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadRoot = path.resolve(__dirname, "..", "uploads");
 
 const allowedMimeTypes = {
-  audio: ["audio/mpeg", "audio/mp3", "audio/wav", "audio/x-wav", "audio/ogg", "audio/mp4"],
-  image: ["image/jpeg", "image/png", "image/webp", "image/gif"]
+  image: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+  audio: ["audio/mpeg", "audio/mp3", "audio/wav", "audio/x-wav", "audio/mp4", "audio/aac"]
 };
 
-const sanitizeFileName = (fileName) =>
-  fileName
-    .toLowerCase()
-    .replace(/[^a-z0-9.\-_]+/g, "-")
-    .replace(/-+/g, "-")
-    .slice(0, 90);
+const makeUploadPath = (type) => {
+  const now = new Date();
+  const year = String(now.getFullYear());
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const folder = path.join(uploadRoot, type, year, month);
+
+  fs.mkdirSync(folder, { recursive: true });
+  return folder;
+};
 
 const storage = multer.diskStorage({
-  destination: (_req, _file, callback) => {
-    const now = new Date();
-    const year = String(now.getFullYear());
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const destination = path.join(uploadRoot, year, month);
-
-    fs.mkdirSync(destination, { recursive: true });
-    callback(null, destination);
+  destination: (req, file, cb) => {
+    const type = file.mimetype.startsWith("audio/") ? "music" : req.uploadType || "gallery";
+    cb(null, makeUploadPath(type));
   },
-  filename: (_req, file, callback) => {
-    const uniquePrefix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    callback(null, `${uniquePrefix}-${sanitizeFileName(file.originalname)}`);
+  filename: (req, file, cb) => {
+    const safeOriginalName = file.originalname
+      .toLowerCase()
+      .replace(/[^a-z0-9.]+/g, "-")
+      .replace(/-+/g, "-");
+    cb(null, `${Date.now()}-${safeOriginalName}`);
   }
 });
 
-const createUploader = (kind) =>
-  multer({
-    storage,
-    limits: {
-      fileSize: kind === "audio" ? 30 * 1024 * 1024 : 8 * 1024 * 1024
-    },
-    fileFilter: (_req, file, callback) => {
-      if (!allowedMimeTypes[kind].includes(file.mimetype)) {
-        callback(new HttpError(400, `Invalid ${kind} file type.`));
-        return;
-      }
+const fileFilter = (req, file, cb) => {
+  const accepted = [...allowedMimeTypes.image, ...allowedMimeTypes.audio];
 
-      callback(null, true);
-    }
-  });
+  if (!accepted.includes(file.mimetype)) {
+    return cb(new Error("Unsupported file type. Upload images or audio files only."));
+  }
 
-export const uploadAudio = createUploader("audio").single("audio");
-export const uploadImage = createUploader("image").single("image");
+  return cb(null, true);
+};
 
-export const getPublicUploadUrl = (file) => {
-  if (!file) return "";
+export const upload = multer({
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 50 * 1024 * 1024
+  }
+});
 
-  const relativePath = path.relative(uploadRoot, file.path).split(path.sep).join("/");
+export const setUploadType = (type) => (req, res, next) => {
+  req.uploadType = type;
+  next();
+};
+
+export const toPublicFileUrl = (file) => {
+  if (!file) {
+    return null;
+  }
+
+  const relativePath = path.relative(uploadRoot, file.path).replace(/\\/g, "/");
   return `/uploads/${relativePath}`;
 };

@@ -15,3 +15,23 @@
     "node": ">=18.18.0"
   }
 }
+{
+  "name": "bebi-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Private MERN relationship memory archive for songs, messages, photos, and milestones.",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev:client": "npm run dev --workspace client",
+    "dev:server": "npm run dev --workspace server",
+    "build": "npm run build --workspace client",
+    "lint": "npm run lint --workspace client && npm run lint --workspace server",
+    "check": "npm run check --workspace server && npm run build --workspace client"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  }
+}

@@ -37,3 +37,8 @@ export const runMonthsaryJob = async (eventDate = new Date()) => {
 
   return event;
 };
+import { handleDailyRelationshipEvents } from "../services/anniversaryScheduler.js";
+
+export const runMonthsaryJob = async () => {
+  return handleDailyRelationshipEvents();
+};
