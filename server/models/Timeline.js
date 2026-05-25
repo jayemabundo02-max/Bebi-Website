@@ -1,38 +1,5 @@
 import mongoose from "mongoose";
 
-const TimelineSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      trim: true,
-      maxlength: 140,
-      required: true
-    },
-    description: {
-      type: String,
-      trim: true,
-      maxlength: 1200,
-      required: true
-    },
-    eventDate: {
-      type: Date,
-      required: true
-    },
-    type: {
-      type: String,
-      enum: ["anniversary", "monthsary", "memory", "milestone", "custom"],
-      default: "custom"
-    }
-  },
-  { timestamps: true }
-);
-
-TimelineSchema.index({ eventDate: -1 });
-TimelineSchema.index({ type: 1, eventDate: -1 });
-
-export default mongoose.model("Timeline", TimelineSchema);
-import mongoose from "mongoose";
-
 const timelineSchema = new mongoose.Schema(
   {
     title: {
@@ -50,6 +17,18 @@ const timelineSchema = new mongoose.Schema(
     eventDate: {
       type: Date,
       required: true,
+      index: true
+    },
+    relationshipDate: {
+      type: Date,
+      required: true,
+      index: true
+    },
+    userId: {
+      type: String,
+      required: true,
+      trim: true,
+      default: "private-archive",
       index: true
     },
     monthKey: {
@@ -77,8 +56,9 @@ const timelineSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-timelineSchema.index({ eventDate: -1 });
-timelineSchema.index({ monthKey: 1, eventDate: -1 });
+timelineSchema.index({ userId: 1, eventDate: -1 });
+timelineSchema.index({ userId: 1, monthKey: 1, eventDate: -1 });
 timelineSchema.index({ type: 1, eventDate: -1 });
+timelineSchema.index({ relationshipDate: -1 });
 
-export default mongoose.model("Timeline", timelineSchema);
+export default mongoose.model("TimelineEvent", timelineSchema);

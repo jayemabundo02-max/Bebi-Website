@@ -18,3 +18,14 @@ export const sampleMessages = [
     createdAt: "2026-04-08T00:00:00.000Z"
   }
 ];
+export const fallbackMessages = [
+  {
+    _id: "message-fallback-1",
+    title: "A Letter Waiting To Be Written",
+    body: "Your journal will appear here after MongoDB is connected and the first message is saved.",
+    authorName: "Bebi Website",
+    monthKey: "2026-05",
+    createdAt: new Date().toISOString(),
+    isPinned: true
+  }
+];

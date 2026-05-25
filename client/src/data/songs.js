@@ -18,3 +18,15 @@ export const sampleSongs = [
     uploadDate: "2026-04-08T00:00:00.000Z"
   }
 ];
+export const fallbackSongs = [
+  {
+    _id: "song-fallback-1",
+    title: "First Archive Song",
+    artist: "Bebi Playlist",
+    caption: "Upload your first song to replace this starter card.",
+    favorite: true,
+    monthKey: "2026-05",
+    uploadedAt: new Date().toISOString(),
+    fileUrl: ""
+  }
+];

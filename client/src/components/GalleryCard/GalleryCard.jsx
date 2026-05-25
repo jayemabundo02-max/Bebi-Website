@@ -1,14 +1,21 @@
-import { buildUploadUrl } from "../../utils/helpers";
-import { formatDate } from "../../utils/formatDate";
+import { resolveFileUrl } from "../../services/api.js";
+import { formatDate } from "../../utils/formatDate.js";
+import "./GalleryCard.css";
 
-export default function GalleryCard({ item, onPreview }) {
+const GalleryCard = ({ item, onPreview }) => {
   return (
-    <button className="gallery-card" onClick={() => onPreview(item)} type="button">
-      <img alt={item.title || "Relationship gallery item"} src={buildUploadUrl(item.imageUrl)} />
+    <button className="gallery-card" type="button" onClick={() => onPreview(item)}>
+      {item.imageUrl ? (
+        <img alt={item.title} src={resolveFileUrl(item.imageUrl)} />
+      ) : (
+        <span className="image-placeholder">Photo</span>
+      )}
       <span>
         <strong>{item.title}</strong>
         <small>{formatDate(item.uploadDate || item.createdAt)}</small>
       </span>
     </button>
   );
-}
+};
+
+export default GalleryCard;

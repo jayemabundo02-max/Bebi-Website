@@ -1,25 +1,5 @@
 import mongoose from "mongoose";
 
-mongoose.set("strictQuery", true);
-mongoose.set("bufferCommands", false);
-
-export const connectDB = async () => {
-  const mongoUri = process.env.MONGO_URI;
-
-  if (!mongoUri) {
-    console.warn("MONGO_URI is not configured. API routes that use MongoDB will fail fast.");
-    return false;
-  }
-
-  await mongoose.connect(mongoUri, {
-    autoIndex: process.env.NODE_ENV !== "production"
-  });
-
-  console.log(`MongoDB connected: ${mongoose.connection.name}`);
-  return true;
-};
-import mongoose from "mongoose";
-
 const connectDB = async () => {
   const mongoUri = process.env.MONGO_URI;
 
@@ -32,7 +12,8 @@ const connectDB = async () => {
 
   try {
     const connection = await mongoose.connect(mongoUri, {
-      autoIndex: process.env.NODE_ENV !== "production"
+      autoIndex: process.env.NODE_ENV !== "production",
+      serverSelectionTimeoutMS: 5000
     });
 
     console.log(`MongoDB connected: ${connection.connection.host}`);

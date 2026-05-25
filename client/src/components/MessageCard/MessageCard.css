@@ -1,0 +1,23 @@
+.message-card {
+  display: grid;
+  gap: 14px;
+}
+
+.message-card h3,
+.message-card p {
+  margin: 0;
+}
+
+.message-body {
+  color: var(--text-soft);
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.message-card footer {
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+}

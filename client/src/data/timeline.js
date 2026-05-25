@@ -14,3 +14,12 @@ export const sampleTimeline = [
     type: "monthsary"
   }
 ];
+export const fallbackTimeline = [
+  {
+    _id: "timeline-fallback-1",
+    title: "Bebi Website Begins",
+    description: "Your private relationship archive is ready for its first saved event.",
+    eventDate: new Date().toISOString(),
+    type: "milestone"
+  }
+];

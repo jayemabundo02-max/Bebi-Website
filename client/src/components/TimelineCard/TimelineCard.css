@@ -1,0 +1,39 @@
+.timeline-card {
+  margin-left: 26px;
+  position: relative;
+}
+
+.timeline-card::before {
+  background: rgba(255, 255, 255, 0.2);
+  bottom: -28px;
+  content: "";
+  left: -30px;
+  position: absolute;
+  top: 34px;
+  width: 2px;
+}
+
+.timeline-dot {
+  background: linear-gradient(135deg, #ff8ccf, #7fd9ff);
+  border-radius: 999px;
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1);
+  height: 16px;
+  left: -37px;
+  position: absolute;
+  top: 28px;
+  width: 16px;
+}
+
+.timeline-card h3,
+.timeline-card p {
+  margin: 0 0 10px;
+}
+
+.timeline-card p:not(.card-kicker) {
+  color: var(--text-soft);
+  line-height: 1.65;
+}
+
+.timeline-card time {
+  color: var(--text-muted);
+}

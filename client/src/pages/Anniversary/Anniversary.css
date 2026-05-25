@@ -1,0 +1,11 @@
+.anniversary-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 760px) {
+  .anniversary-grid {
+    grid-template-columns: 1fr;
+  }
+}

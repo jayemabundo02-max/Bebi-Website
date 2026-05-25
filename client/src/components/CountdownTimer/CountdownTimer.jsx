@@ -1,37 +1,39 @@
-import { useEffect, useMemo, useState } from "react";
-import { getNextMonthsary } from "../../utils/generateMonthsary";
+import { useEffect, useState } from "react";
+import "./CountdownTimer.css";
 
 const getTimeParts = (targetDate) => {
-  const distance = Math.max(0, targetDate.getTime() - Date.now());
+  const target = new Date(targetDate).getTime();
+  const distance = Math.max(0, target - Date.now());
 
   return {
-    days: Math.floor(distance / 86400000),
-    hours: Math.floor((distance / 3600000) % 24),
-    minutes: Math.floor((distance / 60000) % 60),
+    days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((distance / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((distance / (1000 * 60)) % 60),
     seconds: Math.floor((distance / 1000) % 60)
   };
 };
 
-export default function CountdownTimer() {
-  const targetDate = useMemo(() => getNextMonthsary(), []);
+const CountdownTimer = ({ targetDate, label = "Next monthsary" }) => {
   const [parts, setParts] = useState(() => getTimeParts(targetDate));
 
   useEffect(() => {
-    const timerId = window.setInterval(() => {
-      setParts(getTimeParts(targetDate));
-    }, 1000);
-
-    return () => window.clearInterval(timerId);
+    const interval = window.setInterval(() => setParts(getTimeParts(targetDate)), 1000);
+    return () => window.clearInterval(interval);
   }, [targetDate]);
 
   return (
-    <div className="countdown" aria-label="Countdown to next monthsary">
-      {Object.entries(parts).map(([label, value]) => (
-        <span key={label}>
-          <strong>{String(value).padStart(2, "0")}</strong>
-          <small>{label}</small>
-        </span>
-      ))}
-    </div>
+    <section className="countdown glass-card">
+      <p>{label}</p>
+      <div className="countdown-grid">
+        {Object.entries(parts).map(([key, value]) => (
+          <span key={key}>
+            <strong>{String(value).padStart(2, "0")}</strong>
+            <small>{key}</small>
+          </span>
+        ))}
+      </div>
+    </section>
   );
-}
+};
+
+export default CountdownTimer;

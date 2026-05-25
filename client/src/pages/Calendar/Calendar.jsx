@@ -1,14 +1,17 @@
-import SharedCalendar from "../../components/SharedCalendar/SharedCalendar";
+import SharedCalendar from "../../components/SharedCalendar/SharedCalendar.jsx";
+import "./Calendar.css";
 
-export default function Calendar() {
+const Calendar = () => {
   return (
-    <main className="page-shell">
-      <section className="page-hero compact">
-        <p className="eyebrow">Relationship calendar</p>
+    <section>
+      <header className="page-header">
+        <p className="eyebrow">Dates</p>
         <h1>Calendar</h1>
-        <p>Track recurring monthsary and anniversary dates used by the scheduler.</p>
-      </section>
+        <p>Important relationship dates and upcoming monthly milestones.</p>
+      </header>
       <SharedCalendar />
-    </main>
+    </section>
   );
-}
+};
+
+export default Calendar;

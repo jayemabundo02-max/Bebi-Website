@@ -1,12 +1,16 @@
-export default function TimeCapsule() {
+import "./TimeCapsule.css";
+
+const TimeCapsule = () => {
   return (
-    <section className="glass-card time-capsule">
-      <p className="eyebrow">Time capsule</p>
-      <h2>Save something for later</h2>
+    <section className="time-capsule glass-card">
+      <p className="card-kicker">Recap</p>
+      <h2>Time Capsule</h2>
       <p>
-        Use the message, song, gallery, and memory pages as monthly capsules. The backend stores
-        dates and month keys so future recap views can filter the archive quickly.
+        A future space for yearly recaps, favorite photos, favorite songs, and messages saved
+        for anniversary day.
       </p>
     </section>
   );
-}
+};
+
+export default TimeCapsule;

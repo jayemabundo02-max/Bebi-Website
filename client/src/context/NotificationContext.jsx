@@ -1,26 +1,27 @@
-import { createContext, useCallback, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
-export const NotificationContext = createContext(null);
 
-export function NotificationProvider({ children }) {
-  const [notification, setNotification] = useState(null);
+const NotificationContext = createContext(null);
 
-  const showNotification = useCallback((payload) => {
-    setNotification({
-      id: crypto.randomUUID(),
-      tone: "info",
-      ...payload
-    });
+export const NotificationProvider = ({ children }) => {
+  const [toast, setToast] = useState(null);
+
+  const notify = useCallback((message, type = "info") => {
+    setToast({ id: Date.now(), message, type });
+    window.setTimeout(() => setToast(null), 3600);
   }, []);
 
-  const clearNotification = useCallback(() => {
-    setNotification(null);
-  }, []);
-
-  const value = useMemo(
-    () => ({ clearNotification, notification, showNotification }),
-    [clearNotification, notification, showNotification]
-  );
+  const value = useMemo(() => ({ toast, notify }), [notify, toast]);
 
   return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;
-}
+};
+
+export const useNotification = () => {
+  const value = useContext(NotificationContext);
+
+  if (!value) {
+    throw new Error("useNotification must be used inside NotificationProvider.");
+  }
+
+  return value;
+};

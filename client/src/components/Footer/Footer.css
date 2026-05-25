@@ -1,0 +1,9 @@
+.footer {
+  color: var(--text-muted);
+  margin: 34px auto 24px;
+  max-width: 1180px;
+  padding: 0 22px;
+  position: relative;
+  text-align: center;
+  z-index: 1;
+}

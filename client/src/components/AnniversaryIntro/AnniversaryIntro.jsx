@@ -1,26 +1,21 @@
 import { motion } from "framer-motion";
-import { useAnniversary } from "../../hooks/useAnniversary";
+import "./AnniversaryIntro.css";
 
-export default function AnniversaryIntro() {
-  const { isAnniversary, isMonthsary, relationshipYears } = useAnniversary();
-
-  if (!isAnniversary && !isMonthsary) {
-    return null;
-  }
-
+const AnniversaryIntro = ({ yearCount = 0, isAnniversary = false }) => {
   return (
     <motion.section
-      animate={{ opacity: 1, scale: 1 }}
-      className="glass-card anniversary-banner"
-      initial={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.45 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`anniversary-intro glass-card ${isAnniversary ? "active" : ""}`}
+      initial={{ opacity: 0, y: 16 }}
     >
-      <p className="eyebrow">{isAnniversary ? "Anniversary mode" : "Monthsary mode"}</p>
-      <h2>{isAnniversary ? `Happy year ${relationshipYears}` : "Happy monthsary"}</h2>
+      <p className="card-kicker">December 8</p>
+      <h2>{isAnniversary ? "Anniversary mode is live" : "Anniversary mode"}</h2>
       <p>
-        Today gets the special theme: a softer glow, a little more motion, and a reminder to save
-        one new piece of the story.
+        Year {yearCount} is tracked here with a recap, countdowns, and automatic relationship
+        notifications.
       </p>
     </motion.section>
   );
-}
+};
+
+export default AnniversaryIntro;

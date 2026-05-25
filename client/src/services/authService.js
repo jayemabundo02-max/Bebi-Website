@@ -1,11 +1,12 @@
-import api from "./api";
+import api from "./api.js";
 
-export const login = async (accessCode) => {
-  const { data } = await api.post("/auth/login", { accessCode });
+
+export const loginRequest = async (payload) => {
+  const { data } = await api.post("/auth/login", payload);
   return data;
 };
 
-export const getProfile = async () => {
+export const getProfileRequest = async () => {
   const { data } = await api.get("/auth/me");
   return data;
 };

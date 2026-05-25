@@ -1,0 +1,38 @@
+.memory-card {
+  align-items: stretch;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 180px 1fr;
+}
+
+.memory-card img,
+.memory-placeholder {
+  aspect-ratio: 1;
+  border-radius: 18px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.memory-placeholder {
+  background: linear-gradient(135deg, rgba(255, 140, 207, 0.28), rgba(127, 217, 255, 0.22));
+}
+
+.memory-card h3,
+.memory-card p {
+  margin: 0 0 10px;
+}
+
+.memory-card p:not(.card-kicker) {
+  color: var(--text-soft);
+  line-height: 1.65;
+}
+
+.memory-card time {
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .memory-card {
+    grid-template-columns: 1fr;
+  }
+}

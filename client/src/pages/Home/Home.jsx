@@ -1,53 +1,67 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import AnniversaryIntro from "../../components/AnniversaryIntro/AnniversaryIntro";
-import Hero from "../../components/Hero/Hero";
-import TimeCapsule from "../../components/TimeCapsule/TimeCapsule";
+import Hero from "../../components/Hero/Hero.jsx";
+import SharedCalendar from "../../components/SharedCalendar/SharedCalendar.jsx";
+import { getRelationshipStatus } from "../../services/anniversaryService.js";
+import { calculateDaysTogether } from "../../utils/calculateDaysTogether.js";
+import { getNextMonthsary, isMonthsaryToday } from "../../utils/generateMonthsary.js";
+import "./Home.css";
 
 const quickLinks = [
-  {
-    title: "Our Song",
-    copy: "Upload monthly tracks, captions, and favorites.",
-    to: "/songs"
-  },
-  {
-    title: "Messages",
-    copy: "Keep long letters and editable journal notes.",
-    to: "/messages"
-  },
-  {
-    title: "Gallery",
-    copy: "Collect photos into month-based albums.",
-    to: "/gallery"
-  },
-  {
-    title: "Memories",
-    copy: "Save milestone cards with date, image, and caption.",
-    to: "/memories"
-  }
+  { to: "/songs", title: "Our Songs", body: "Upload music, captions, and favorite monthly tracks." },
+  { to: "/messages", title: "Messages", body: "Save long letters and relationship journal notes." },
+  { to: "/gallery", title: "Gallery", body: "Organize photos into soft monthly albums." },
+  { to: "/memories", title: "Memories", body: "Capture milestones as timeline memory cards." }
 ];
 
-export default function Home() {
+const Home = () => {
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+
+    getRelationshipStatus()
+      .then((data) => {
+        if (active) setStatus(data);
+      })
+      .catch(() => {
+        if (active) {
+          setStatus({
+            daysTogether: calculateDaysTogether(),
+            nextMonthsary: getNextMonthsary().toISOString(),
+            anniversary: { isToday: false, yearCount: 0 }
+          });
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const nextMonthsary = status?.nextMonthsary || getNextMonthsary().toISOString();
+
   return (
-    <main className="page-shell">
-      <Hero />
-      <AnniversaryIntro />
-
-      <section className="section-heading">
-        <p className="eyebrow">Archive map</p>
-        <h2>Everything has a place</h2>
-      </section>
-
-      <section className="feature-grid">
+    <>
+      <Hero daysTogether={status?.daysTogether ?? calculateDaysTogether()} nextMonthsary={nextMonthsary} />
+      {isMonthsaryToday() ? (
+        <section className="monthsary-banner glass-card">
+          <p className="card-kicker">Today is the 8th</p>
+          <h2>Happy monthsary</h2>
+          <p>A new monthly chapter is ready for songs, letters, photos, and memories.</p>
+        </section>
+      ) : null}
+      <section className="home-links page-grid">
         {quickLinks.map((item) => (
-          <Link className="glass-card feature-card" key={item.to} to={item.to}>
-            <h3>{item.title}</h3>
-            <p>{item.copy}</p>
-            <span>Open</span>
+          <Link className="home-link glass-card" key={item.to} to={item.to}>
+            <h2>{item.title}</h2>
+            <p>{item.body}</p>
           </Link>
         ))}
       </section>
-
-      <TimeCapsule />
-    </main>
+      <SharedCalendar />
+    </>
   );
-}
+};
+
+export default Home;

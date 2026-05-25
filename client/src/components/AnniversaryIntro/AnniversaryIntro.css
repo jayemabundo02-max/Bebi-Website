@@ -1,0 +1,20 @@
+.anniversary-intro {
+  background:
+    linear-gradient(135deg, rgba(255, 140, 207, 0.22), rgba(127, 217, 255, 0.18)),
+    rgba(255, 255, 255, 0.1);
+}
+
+.anniversary-intro.active {
+  border-color: rgba(255, 140, 207, 0.6);
+  box-shadow: 0 24px 80px rgba(255, 140, 207, 0.22);
+}
+
+.anniversary-intro h2,
+.anniversary-intro p {
+  margin: 0 0 12px;
+}
+
+.anniversary-intro p:last-child {
+  color: var(--text-soft);
+  line-height: 1.65;
+}

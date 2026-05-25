@@ -1,0 +1,12 @@
+.upload-grid a {
+  color: var(--text-strong);
+  font-size: 1.15rem;
+  font-weight: 800;
+  min-height: 150px;
+  text-decoration: none;
+  transition: transform 180ms ease;
+}
+
+.upload-grid a:hover {
+  transform: translateY(-4px);
+}

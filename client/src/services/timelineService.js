@@ -1,11 +1,12 @@
-import api from "./api";
+import api from "./api.js";
+
 
 export const getTimelineEvents = async (params = {}) => {
   const { data } = await api.get("/timeline", { params });
-  return data;
+  return data.events;
 };
 
 export const createTimelineEvent = async (payload) => {
   const { data } = await api.post("/timeline", payload);
-  return data;
+  return data.event;
 };

@@ -1,0 +1,9 @@
+.time-capsule h2,
+.time-capsule p {
+  margin: 0 0 12px;
+}
+
+.time-capsule p:last-child {
+  color: var(--text-soft);
+  line-height: 1.7;
+}

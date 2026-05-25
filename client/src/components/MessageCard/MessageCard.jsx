@@ -1,56 +1,23 @@
-import { useState } from "react";
-import { formatDate } from "../../utils/formatDate";
+import { formatDate } from "../../utils/formatDate.js";
+import "./MessageCard.css";
 
-export default function MessageCard({ message, onSave }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [draft, setDraft] = useState({ body: message.body, title: message.title });
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    await onSave(message._id, draft);
-    setIsEditing(false);
-  };
-
+const MessageCard = ({ message, onEdit }) => {
   return (
-    <article className={message.isPinned ? "glass-card message-card pinned" : "glass-card message-card"}>
-      <div className="card-header">
-        <div>
-          <p className="eyebrow">{message.monthKey || "Letter"}</p>
-          <h3>{message.title}</h3>
-        </div>
-        <time>{formatDate(message.createdAt)}</time>
+    <article className="message-card glass-card">
+      <div className="card-actions">
+        <p className="card-kicker">{message.monthKey}</p>
+        <button className="ghost-button compact" type="button" onClick={() => onEdit(message)}>
+          Edit
+        </button>
       </div>
-
-      {isEditing ? (
-        <form className="inline-edit" onSubmit={handleSubmit}>
-          <input
-            aria-label="Message title"
-            onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))}
-            value={draft.title}
-          />
-          <textarea
-            aria-label="Message body"
-            onChange={(event) => setDraft((current) => ({ ...current, body: event.target.value }))}
-            rows="5"
-            value={draft.body}
-          />
-          <div className="form-actions">
-            <button className="primary-button small" type="submit">
-              Save
-            </button>
-            <button className="ghost-button small" onClick={() => setIsEditing(false)} type="button">
-              Cancel
-            </button>
-          </div>
-        </form>
-      ) : (
-        <>
-          <p>{message.body}</p>
-          <button className="ghost-button small" onClick={() => setIsEditing(true)} type="button">
-            Edit
-          </button>
-        </>
-      )}
+      <h3>{message.title}</h3>
+      <p className="message-body">{message.body}</p>
+      <footer>
+        <span>{message.authorName}</span>
+        <span>{formatDate(message.createdAt)}</span>
+      </footer>
     </article>
   );
-}
+};
+
+export default MessageCard;

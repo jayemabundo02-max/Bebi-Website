@@ -1,15 +1,21 @@
 import { Outlet } from "react-router-dom";
-import Footer from "../components/Footer/Footer";
-import Navbar from "../components/Navbar/Navbar";
+import FloatingHearts from "../components/FloatingHearts/FloatingHearts.jsx";
+import Footer from "../components/Footer/Footer.jsx";
+import Navbar from "../components/Navbar/Navbar.jsx";
+import NotificationPopup from "../components/NotificationPopup/NotificationPopup.jsx";
 
-export default function MainLayout() {
+const MainLayout = () => {
   return (
-    <div className="app-frame">
-      <div className="ambient ambient-one" />
-      <div className="ambient ambient-two" />
+    <div className="app-shell">
+      <FloatingHearts />
       <Navbar />
-      <Outlet />
+      <main className="page-shell">
+        <Outlet />
+      </main>
       <Footer />
+      <NotificationPopup />
     </div>
   );
-}
+};
+
+export default MainLayout;

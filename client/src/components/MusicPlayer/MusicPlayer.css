@@ -1,0 +1,13 @@
+.music-player {
+  display: grid;
+  gap: 16px;
+}
+
+.music-player h3,
+.music-player p {
+  margin: 0;
+}
+
+.music-player audio {
+  width: 100%;
+}

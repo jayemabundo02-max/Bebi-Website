@@ -1,0 +1,17 @@
+.notification-popup {
+  background: rgba(18, 23, 64, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  bottom: 24px;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+  color: var(--text-strong);
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 14px 16px;
+  position: fixed;
+  right: 24px;
+  z-index: 40;
+}
+
+.notification-popup.error {
+  border-color: rgba(255, 126, 126, 0.62);
+}

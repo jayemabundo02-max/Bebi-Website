@@ -1,0 +1,26 @@
+.login-screen {
+  display: grid;
+  min-height: 100vh;
+  padding: 22px;
+  place-items: center;
+  position: relative;
+}
+
+.login-card {
+  max-width: 520px;
+  position: relative;
+  width: min(100%, 520px);
+  z-index: 1;
+}
+
+.login-card h1 {
+  font-size: clamp(2.6rem, 12vw, 5.7rem);
+  line-height: 0.95;
+  margin: 0 0 16px;
+}
+
+.login-card > p:not(.eyebrow) {
+  color: var(--text-soft);
+  line-height: 1.7;
+  margin: 0 0 24px;
+}

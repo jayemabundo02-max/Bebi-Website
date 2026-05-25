@@ -1,18 +1,19 @@
-import api from "./api";
+import api from "./api.js";
+
 
 export const getMessages = async (params = {}) => {
   const { data } = await api.get("/messages", { params });
-  return data;
+  return data.messages;
 };
 
 export const createMessage = async (payload) => {
   const { data } = await api.post("/messages", payload);
-  return data;
+  return data.message;
 };
 
 export const updateMessage = async (id, payload) => {
   const { data } = await api.patch(`/messages/${id}`, payload);
-  return data;
+  return data.message;
 };
 
 export const deleteMessage = async (id) => {

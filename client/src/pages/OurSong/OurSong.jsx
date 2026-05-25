@@ -1,138 +1,141 @@
-import { useState } from "react";
-import SongCard from "../../components/SongCard/SongCard";
-import { useMusic } from "../../hooks/useMusic";
-import { useNotification } from "../../hooks/useNotification";
-import { createSong } from "../../services/musicService";
-import { getErrorMessage } from "../../utils/helpers";
+import { useMemo, useState } from "react";
+import MusicPlayer from "../../components/MusicPlayer/MusicPlayer.jsx";
+import SongCard from "../../components/SongCard/SongCard.jsx";
+import { useNotification } from "../../context/NotificationContext.jsx";
+import { fallbackSongs } from "../../data/songs.js";
+import { useMusic } from "../../hooks/useMusic.js";
+import { createSong } from "../../services/musicService.js";
+import { groupByMonth } from "../../utils/helpers.js";
+import "./OurSong.css";
 
 const initialForm = {
+  title: "",
   artist: "",
-  audio: null,
   caption: "",
-  isFavorite: false,
-  title: ""
+  favorite: false,
+  file: null
 };
 
-export default function OurSong() {
-  const { error, isLoading, loadSongs, songs } = useMusic();
-  const { showNotification } = useNotification();
+const OurSong = () => {
+  const { items: songs, setItems, loading, error, refresh } = useMusic();
   const [form, setForm] = useState(initialForm);
-  const [isUploading, setIsUploading] = useState(false);
+  const [selected, setSelected] = useState({ src: "", title: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const { notify } = useNotification();
 
-  const favoriteSongs = songs.filter((song) => song.isFavorite);
+  const groupedSongs = useMemo(() => groupByMonth(songs, "uploadedAt"), [songs]);
+  const favoriteSongs = songs.filter((song) => song.favorite);
+
+  const handleChange = (event) => {
+    const { name, type, checked, files, value } = event.target;
+    setForm((current) => ({
+      ...current,
+      [name]: type === "checkbox" ? checked : files ? files[0] : value
+    }));
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setIsUploading(true);
+
+    if (!form.file) {
+      notify("Choose an audio file before uploading.", "error");
+      return;
+    }
+
+    setSubmitting(true);
+    const formData = new FormData();
+    formData.append("title", form.title);
+    formData.append("artist", form.artist);
+    formData.append("caption", form.caption);
+    formData.append("favorite", String(form.favorite));
+    formData.append("file", form.file);
 
     try {
-      await createSong(form);
+      const song = await createSong(formData);
+      setItems((current) => [song, ...current.filter((item) => !item._id?.startsWith("song-fallback"))]);
       setForm(initialForm);
-      await loadSongs();
-      showNotification({
-        title: "Song uploaded",
-        message: "The monthly archive has a new track.",
-        tone: "success"
-      });
-    } catch (submitError) {
-      showNotification({
-        title: "Upload failed",
-        message: getErrorMessage(submitError, "Could not save the song."),
-        tone: "error"
-      });
+      event.currentTarget.reset();
+      notify("Song uploaded and saved.");
+      refresh();
+    } catch (requestError) {
+      notify(requestError.message, "error");
     } finally {
-      setIsUploading(false);
+      setSubmitting(false);
     }
   };
 
+  const displaySongs = songs.length ? songs : fallbackSongs;
+
   return (
-    <main className="page-shell">
-      <section className="page-hero compact">
-        <p className="eyebrow">Monthly soundtrack</p>
+    <section>
+      <header className="page-header">
+        <p className="eyebrow">Music archive</p>
         <h1>Our Song</h1>
-        <p>Upload music, add captions, and keep favorite songs easy to find.</p>
-      </section>
-
-      <section className="content-split">
-        <form className="glass-card stack-form" onSubmit={handleSubmit}>
+        <p>Upload songs, mark favorites, and keep a monthly archive of your shared soundtrack.</p>
+      </header>
+      <div className="song-layout">
+        <form className="glass-card form-grid" onSubmit={handleSubmit}>
           <h2>Upload a song</h2>
-          <label htmlFor="song-title">Title</label>
-          <input
-            id="song-title"
-            onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
-            required
-            value={form.title}
-          />
-          <label htmlFor="song-artist">Artist</label>
-          <input
-            id="song-artist"
-            onChange={(event) => setForm((current) => ({ ...current, artist: event.target.value }))}
-            value={form.artist}
-          />
-          <label htmlFor="song-caption">Caption</label>
-          <textarea
-            id="song-caption"
-            onChange={(event) => setForm((current) => ({ ...current, caption: event.target.value }))}
-            rows="4"
-            value={form.caption}
-          />
-          <label htmlFor="song-file">Music file</label>
-          <input
-            accept="audio/*"
-            id="song-file"
-            onChange={(event) =>
-              setForm((current) => ({ ...current, audio: event.target.files?.[0] || null }))
-            }
-            type="file"
-          />
-          <label className="check-row">
-            <input
-              checked={form.isFavorite}
-              onChange={(event) =>
-                setForm((current) => ({ ...current, isFavorite: event.target.checked }))
-              }
-              type="checkbox"
-            />
-            Mark as favorite
+          <label>
+            Song title
+            <input name="title" required value={form.title} onChange={handleChange} />
           </label>
-          <button className="primary-button full" disabled={isUploading} type="submit">
-            {isUploading ? "Saving..." : "Save song"}
+          <label>
+            Artist
+            <input name="artist" value={form.artist} onChange={handleChange} />
+          </label>
+          <label>
+            Caption
+            <textarea name="caption" value={form.caption} onChange={handleChange} />
+          </label>
+          <label className="inline-check">
+            <input name="favorite" type="checkbox" checked={form.favorite} onChange={handleChange} />
+            Add to favorites
+          </label>
+          <label>
+            Audio file
+            <input accept="audio/*" name="file" type="file" onChange={handleChange} />
+          </label>
+          <button className="primary-button" disabled={submitting} type="submit">
+            {submitting ? "Uploading..." : "Save Song"}
           </button>
+          {error ? <p className="error-text">{error}</p> : null}
         </form>
-
-        <div className="stack-list">
-          {error ? <p className="soft-warning">{error}</p> : null}
-          <section>
-            <div className="section-heading inline">
-              <p className="eyebrow">Favorites</p>
-              <h2>Most replayed</h2>
-            </div>
-            <div className="card-grid">
-              {favoriteSongs.length ? (
-                favoriteSongs.map((song) => <SongCard key={song._id} song={song} />)
-              ) : (
-                <p className="empty-state">No favorite songs yet.</p>
-              )}
-            </div>
-          </section>
-
-          <section>
-            <div className="section-heading inline">
-              <p className="eyebrow">Archive</p>
-              <h2>Monthly songs</h2>
-            </div>
-            {isLoading ? (
-              <p className="empty-state">Loading songs...</p>
-            ) : (
-              <div className="card-grid">
-                {songs.map((song) => (
-                  <SongCard key={song._id} song={song} />
+        <MusicPlayer src={selected.src} title={selected.title} />
+      </div>
+      {favoriteSongs.length ? (
+        <section className="feature-section">
+          <h2>Favorite songs</h2>
+          <div className="page-grid">
+            {favoriteSongs.map((song) => (
+              <SongCard key={song._id} song={song} onPlay={(src, title) => setSelected({ src, title })} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+      <section className="feature-section">
+        <h2>Monthly archive {loading ? <small>Loading...</small> : null}</h2>
+        {Object.entries(groupedSongs).length ? (
+          Object.entries(groupedSongs).map(([month, monthSongs]) => (
+            <div className="archive-group" key={month}>
+              <h3>{month}</h3>
+              <div className="page-grid">
+                {monthSongs.map((song) => (
+                  <SongCard key={song._id} song={song} onPlay={(src, title) => setSelected({ src, title })} />
                 ))}
               </div>
-            )}
-          </section>
-        </div>
+            </div>
+          ))
+        ) : (
+          <div className="page-grid">
+            {displaySongs.map((song) => (
+              <SongCard key={song._id} song={song} onPlay={(src, title) => setSelected({ src, title })} />
+            ))}
+          </div>
+        )}
       </section>
-    </main>
+    </section>
   );
-}
+};
+
+export default OurSong;

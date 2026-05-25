@@ -1,13 +1,5 @@
-import express from "express";
-import { createTimelineEvent, getTimeline } from "../controllers/timelineController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { requireDatabase } from "../middleware/databaseMiddleware.js";
 
-const router = express.Router();
-
-router.use(protect);
-router.route("/").get(getTimeline).post(createTimelineEvent);
-
-export default router;
 import express from "express";
 import {
   createTimelineEvent,
@@ -16,7 +8,6 @@ import {
   updateTimelineEvent
 } from "../controllers/timelineController.js";
 import { protect } from "../middleware/authMiddleware.js";
-import { requireDatabase } from "../middleware/databaseMiddleware.js";
 
 const router = express.Router();
 

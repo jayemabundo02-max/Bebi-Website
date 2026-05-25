@@ -1,20 +1,23 @@
-export const formatDate = (date, options = {}) => {
-  if (!date) return "No date";
+export const formatDate = (value, options = {}) => {
+  if (!value) {
+    return "No date";
+  }
 
-  const parsed = new Date(date);
-  if (Number.isNaN(parsed.getTime())) return "Invalid date";
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Invalid date";
+  }
 
   return new Intl.DateTimeFormat("en", {
     month: "short",
     day: "numeric",
     year: "numeric",
     ...options
-  }).format(parsed);
+  }).format(date);
 };
 
-export const getMonthKey = (date = new Date()) => {
-  const parsed = new Date(date);
-  const year = parsed.getFullYear();
-  const month = String(parsed.getMonth() + 1).padStart(2, "0");
-  return `${year}-${month}`;
+export const formatMonthKey = (value = new Date()) => {
+  const date = value instanceof Date ? value : new Date(value);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 };

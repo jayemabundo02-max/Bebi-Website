@@ -1,65 +1,42 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import CountdownTimer from "../CountdownTimer/CountdownTimer";
-import { calculateDaysTogether } from "../../utils/calculateDaysTogether";
-import { useAnniversary } from "../../hooks/useAnniversary";
+import CountdownTimer from "../CountdownTimer/CountdownTimer.jsx";
+import "./Hero.css";
 
-const hearts = Array.from({ length: 16 }, (_, index) => index);
-
-export default function Hero() {
-  const { daysUntilMonthsary, isAnniversary, isMonthsary, relationshipYears } = useAnniversary();
-  const daysTogether = calculateDaysTogether();
-
+const Hero = ({ daysTogether, nextMonthsary }) => {
   return (
-    <section className={isAnniversary || isMonthsary ? "hero celebration-mode" : "hero"}>
-      <div className="floating-hearts" aria-hidden="true">
-        {hearts.map((heart) => (
-          <span key={heart} style={{ "--delay": `${heart * 0.35}s`, "--left": `${8 + heart * 6}%` }} />
-        ))}
-      </div>
-
+    <section className="hero">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="hero-content"
-        initial={{ opacity: 0, y: 24 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
+        className="hero-copy"
+        initial={{ opacity: 0, y: 18 }}
+        transition={{ duration: 0.7 }}
       >
-        <p className="eyebrow">Private relationship memory archive</p>
+        <p className="eyebrow">Private relationship archive</p>
         <h1>Bebi Website</h1>
-        <p className="hero-copy">
-          A soft, private space for our songs, messages, pictures, milestones, and monthly letters.
+        <p className="hero-lead">
+          A soft, private place for the songs, letters, photos, and little milestones that
+          make your story feel alive.
         </p>
-
-        <div className="hero-actions">
-          <Link className="primary-button" to="/memories">
-            Add a memory
-          </Link>
-          <Link className="ghost-button" to="/songs">
-            Open songs
-          </Link>
+        <div className="hero-stats">
+          <span>
+            <strong>{daysTogether}</strong>
+            days together
+          </span>
+          <span>
+            <strong>Dec 8</strong>
+            anniversary date
+          </span>
         </div>
       </motion.div>
-
       <motion.div
-        animate={{ opacity: 1, y: 0 }}
-        className="hero-panel glass-card"
-        initial={{ opacity: 0, y: 30 }}
-        transition={{ delay: 0.15, duration: 0.7, ease: "easeOut" }}
+        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        transition={{ delay: 0.1, duration: 0.7 }}
       >
-        <div>
-          <span className="metric-label">Days together</span>
-          <strong>{daysTogether}</strong>
-        </div>
-        <div>
-          <span className="metric-label">Years archived</span>
-          <strong>{relationshipYears}</strong>
-        </div>
-        <div>
-          <span className="metric-label">Next monthsary</span>
-          <strong>{daysUntilMonthsary}d</strong>
-        </div>
-        <CountdownTimer />
+        <CountdownTimer targetDate={nextMonthsary} />
       </motion.div>
     </section>
   );
-}
+};
+
+export default Hero;

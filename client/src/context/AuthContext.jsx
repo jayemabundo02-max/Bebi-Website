@@ -1,75 +1,90 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from "react";
-import { getProfile, login as loginRequest } from "../services/authService";
+import { getProfileRequest, loginRequest } from "../services/authService.js";
 
-export const AuthContext = createContext(null);
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-const readStoredProfile = () => {
-  try {
-    return JSON.parse(localStorage.getItem("bebi_profile")) || null;
-  } catch {
-    return null;
-  }
+const AuthContext = createContext(null);
+
+const readStoredUser = () => {
+  const raw = localStorage.getItem("bebi_user");
+  return raw ? JSON.parse(raw) : null;
 };
 
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem("bebi_token"));
-  const [profile, setProfile] = useState(readStoredProfile);
-  const [isBootstrapping, setIsBootstrapping] = useState(Boolean(token));
-
-  const login = useCallback(async (accessCode) => {
-    const response = await loginRequest(accessCode);
-    localStorage.setItem("bebi_token", response.token);
-    localStorage.setItem("bebi_profile", JSON.stringify(response.profile));
-    setToken(response.token);
-    setProfile(response.profile);
-    return response.profile;
-  }, []);
-
-  const logout = useCallback(() => {
-    localStorage.removeItem("bebi_token");
-    localStorage.removeItem("bebi_profile");
-    setToken(null);
-    setProfile(null);
-  }, []);
+  const [user, setUser] = useState(() => readStoredUser());
+  const [loading, setLoading] = useState(Boolean(localStorage.getItem("bebi_token")));
 
   useEffect(() => {
-    let isMounted = true;
+    let active = true;
 
-    if (!token) {
-      setIsBootstrapping(false);
-      return undefined;
-    }
+    const hydrate = async () => {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
-    getProfile()
-      .then((response) => {
-        if (!isMounted) return;
-        setProfile(response.profile);
-        localStorage.setItem("bebi_profile", JSON.stringify(response.profile));
-      })
-      .catch(() => {
-        if (!isMounted) return;
-        logout();
-      })
-      .finally(() => {
-        if (isMounted) setIsBootstrapping(false);
-      });
+      try {
+        const data = await getProfileRequest();
+        if (!active) return;
+        setUser(data.user);
+        localStorage.setItem("bebi_user", JSON.stringify(data.user));
+      } catch {
+        if (!active) return;
+        localStorage.removeItem("bebi_token");
+        localStorage.removeItem("bebi_user");
+        setToken(null);
+        setUser(null);
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    hydrate();
 
     return () => {
-      isMounted = false;
+      active = false;
     };
-  }, [logout, token]);
+  }, [token]);
+
+  const login = async ({ accessCode, displayName }) => {
+    const data = await loginRequest({ accessCode, displayName });
+    localStorage.setItem("bebi_token", data.token);
+    localStorage.setItem("bebi_user", JSON.stringify(data.user));
+    setToken(data.token);
+    setUser(data.user);
+    return data.user;
+  };
+
+  const logout = () => {
+    localStorage.removeItem("bebi_token");
+    localStorage.removeItem("bebi_user");
+    setToken(null);
+    setUser(null);
+  };
 
   const value = useMemo(
     () => ({
-      isAuthenticated: Boolean(token),
-      isBootstrapping,
+      token,
+      user,
+      loading,
       login,
       logout,
-      profile,
-      token
+      isAuthenticated: Boolean(token && user)
     }),
-    [isBootstrapping, login, logout, profile, token]
+    [loading, token, user]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+};
+
+export const useAuth = () => {
+  const value = useContext(AuthContext);
+
+  if (!value) {
+    throw new Error("useAuth must be used inside AuthProvider.");
+  }
+
+  return value;
+};

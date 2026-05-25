@@ -1,22 +1,21 @@
-import api from "./api";
+import api from "./api.js";
 
-export const getGalleryItems = async (params = {}) => {
+
+export const getGallery = async (params = {}) => {
   const { data } = await api.get("/gallery", { params });
-  return data;
+  return data.gallery;
 };
 
-export const createGalleryItem = async (payload) => {
-  const formData = new FormData();
-  Object.entries(payload).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      formData.append(key, value);
-    }
-  });
-
+export const createGalleryItem = async (formData) => {
   const { data } = await api.post("/gallery", formData, {
     headers: { "Content-Type": "multipart/form-data" }
   });
-  return data;
+  return data.item;
+};
+
+export const updateGalleryItem = async (id, payload) => {
+  const { data } = await api.patch(`/gallery/${id}`, payload);
+  return data.item;
 };
 
 export const deleteGalleryItem = async (id) => {

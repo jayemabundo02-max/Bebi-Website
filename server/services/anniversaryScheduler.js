@@ -1,8 +1,8 @@
-export { startSchedulers } from "./schedulerService.js";
+import { getAnniversaryDetails, getNextMonthsary } from "../utils/dateUtils.js";
+
 import { createNotification } from "./notificationService.js";
 import { sendEmailNotification } from "./emailService.js";
 import { sendSmsNotification } from "./smsService.js";
-import { getAnniversaryDetails, getNextMonthsary } from "../utils/dateUtils.js";
 
 export const handleDailyRelationshipEvents = async () => {
   const now = new Date();

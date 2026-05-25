@@ -1,0 +1,32 @@
+.home-links {
+  margin: 28px 0;
+}
+
+.home-link {
+  color: var(--text-strong);
+  min-height: 180px;
+  text-decoration: none;
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.home-link:hover {
+  border-color: rgba(158, 232, 255, 0.62);
+  transform: translateY(-4px);
+}
+
+.home-link h2,
+.home-link p,
+.monthsary-banner h2,
+.monthsary-banner p {
+  margin: 0 0 12px;
+}
+
+.home-link p,
+.monthsary-banner p:last-child {
+  color: var(--text-soft);
+  line-height: 1.65;
+}
+
+.monthsary-banner {
+  margin-bottom: 24px;
+}

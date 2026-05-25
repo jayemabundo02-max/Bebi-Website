@@ -18,3 +18,12 @@ export const sampleMemories = [
     milestone: false
   }
 ];
+export const fallbackMemories = [
+  {
+    _id: "memory-fallback-1",
+    title: "First Milestone",
+    caption: "A timeline card for the next small beautiful thing you want to remember.",
+    date: new Date().toISOString(),
+    milestoneType: "ordinary"
+  }
+];

@@ -1,66 +1,40 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import { NavLink } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
+import "./Navbar.css";
 
 const navItems = [
-  { label: "Home", to: "/" },
-  { label: "Songs", to: "/songs" },
-  { label: "Messages", to: "/messages" },
-  { label: "Gallery", to: "/gallery" },
-  { label: "Memories", to: "/memories" },
-  { label: "Timeline", to: "/timeline" }
+  { to: "/", label: "Home" },
+  { to: "/songs", label: "Songs" },
+  { to: "/messages", label: "Messages" },
+  { to: "/gallery", label: "Gallery" },
+  { to: "/memories", label: "Memories" },
+  { to: "/timeline", label: "Timeline" }
 ];
 
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { logout, profile } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login", { replace: true });
-  };
+const Navbar = () => {
+  const { logout, user } = useAuth();
 
   return (
     <header className="navbar">
-      <NavLink className="brand-mark" to="/" onClick={() => setIsOpen(false)}>
-        <span className="brand-orb" aria-hidden="true" />
+      <NavLink className="brand" to="/">
+        <span className="brand-mark">B</span>
         <span>
           <strong>Bebi Website</strong>
-          <small>{profile?.displayName || "Private archive"}</small>
+          <small>{user?.displayName || "Private archive"}</small>
         </span>
       </NavLink>
-
-      <button
-        aria-expanded={isOpen}
-        aria-label="Toggle navigation"
-        className="nav-toggle"
-        onClick={() => setIsOpen((current) => !current)}
-        type="button"
-      >
-        <span />
-        <span />
-        <span />
-      </button>
-
-      <nav className={isOpen ? "nav-links is-open" : "nav-links"}>
+      <nav className="nav-links" aria-label="Main navigation">
         {navItems.map((item) => (
-          <NavLink
-            className={({ isActive }) => (isActive ? "nav-link is-active" : "nav-link")}
-            key={item.to}
-            onClick={() => setIsOpen(false)}
-            to={item.to}
-          >
+          <NavLink key={item.to} to={item.to} end={item.to === "/"}>
             {item.label}
           </NavLink>
         ))}
-        <NavLink className="nav-link admin-link" onClick={() => setIsOpen(false)} to="/admin">
-          Admin
-        </NavLink>
-        <button className="ghost-button small" onClick={handleLogout} type="button">
-          Lock
-        </button>
       </nav>
+      <button className="ghost-button" type="button" onClick={logout}>
+        Lock
+      </button>
     </header>
   );
-}
+};
+
+export default Navbar;

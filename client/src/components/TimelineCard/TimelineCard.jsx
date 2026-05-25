@@ -1,15 +1,16 @@
-import { formatDate } from "../../utils/formatDate";
+import { formatDate } from "../../utils/formatDate.js";
+import "./TimelineCard.css";
 
-export default function TimelineCard({ event, index }) {
+const TimelineCard = ({ event }) => {
   return (
-    <article className={index % 2 === 0 ? "timeline-card left" : "timeline-card right"}>
-      <div className="timeline-dot" aria-hidden="true" />
-      <div className="glass-card">
-        <p className="eyebrow">{event.type || "Milestone"}</p>
-        <h3>{event.title}</h3>
-        <p>{event.description}</p>
-        <time>{formatDate(event.eventDate)}</time>
-      </div>
+    <article className="timeline-card glass-card">
+      <span className="timeline-dot" />
+      <p className="card-kicker">{event.type}</p>
+      <h3>{event.title}</h3>
+      <p>{event.description}</p>
+      <time>{formatDate(event.eventDate || event.relationshipDate)}</time>
     </article>
   );
-}
+};
+
+export default TimelineCard;

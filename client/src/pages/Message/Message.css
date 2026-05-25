@@ -1,0 +1,30 @@
+.message-layout {
+  align-items: start;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
+}
+
+.message-layout form {
+  position: sticky;
+  top: 112px;
+}
+
+.message-layout h2 {
+  margin: 0;
+}
+
+.message-list {
+  display: grid;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .message-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .message-layout form {
+    position: static;
+  }
+}

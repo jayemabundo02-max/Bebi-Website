@@ -1,0 +1,51 @@
+.floating-hearts {
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: fixed;
+  z-index: 0;
+}
+
+.floating-heart {
+  animation: floatHeart var(--duration) linear infinite;
+  animation-delay: var(--delay);
+  background: rgba(255, 131, 185, 0.4);
+  bottom: -10%;
+  height: 18px;
+  left: var(--left);
+  position: absolute;
+  transform: rotate(45deg);
+  width: 18px;
+}
+
+.floating-heart::before,
+.floating-heart::after {
+  background: inherit;
+  border-radius: 999px;
+  content: "";
+  height: 18px;
+  position: absolute;
+  width: 18px;
+}
+
+.floating-heart::before {
+  left: -9px;
+}
+
+.floating-heart::after {
+  top: -9px;
+}
+
+@keyframes floatHeart {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(45deg) scale(0.7);
+  }
+  12% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(32px, -115vh, 0) rotate(45deg) scale(1.2);
+  }
+}

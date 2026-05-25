@@ -1,3 +1,12 @@
-import { createContext } from "react";
+import { useMessage } from "../hooks/useMessage.js";
 
-export const MessageContext = createContext(null);
+import { createContext, useContext } from "react";
+
+const MessageContext = createContext(null);
+
+export const MessageProvider = ({ children }) => {
+  const messages = useMessage();
+  return <MessageContext.Provider value={messages}>{children}</MessageContext.Provider>;
+};
+
+export const useMessageContext = () => useContext(MessageContext);

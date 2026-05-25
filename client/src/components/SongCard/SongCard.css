@@ -1,0 +1,35 @@
+.song-card {
+  display: grid;
+  gap: 14px;
+  min-height: 220px;
+}
+
+.song-card h3,
+.song-card p {
+  margin: 0;
+}
+
+.card-kicker {
+  color: #9ee8ff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.card-caption {
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.card-actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.card-actions span {
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}

@@ -1,22 +1,21 @@
-import api from "./api";
+import api from "./api.js";
+
 
 export const getSongs = async (params = {}) => {
   const { data } = await api.get("/songs", { params });
-  return data;
+  return data.songs;
 };
 
-export const createSong = async (payload) => {
-  const formData = new FormData();
-  Object.entries(payload).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      formData.append(key, value);
-    }
-  });
-
+export const createSong = async (formData) => {
   const { data } = await api.post("/songs", formData, {
     headers: { "Content-Type": "multipart/form-data" }
   });
-  return data;
+  return data.song;
+};
+
+export const updateSong = async (id, payload) => {
+  const { data } = await api.patch(`/songs/${id}`, payload);
+  return data.song;
 };
 
 export const deleteSong = async (id) => {

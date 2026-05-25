@@ -1,48 +1,59 @@
-import { useAnniversary } from "../../hooks/useAnniversary";
-import { calculateDaysTogether } from "../../utils/calculateDaysTogether";
+import { useEffect, useState } from "react";
+import AnniversaryIntro from "../../components/AnniversaryIntro/AnniversaryIntro.jsx";
+import CountdownTimer from "../../components/CountdownTimer/CountdownTimer.jsx";
+import TimeCapsule from "../../components/TimeCapsule/TimeCapsule.jsx";
+import { getRelationshipStatus } from "../../services/anniversaryService.js";
+import { getAnniversaryInfo } from "../../utils/anniversaryChecker.js";
+import { getNextMonthsary } from "../../utils/generateMonthsary.js";
+import "./Anniversary.css";
 
-export default function Anniversary() {
-  const { daysUntilMonthsary, isAnniversary, isMonthsary, relationshipYears } = useAnniversary();
+const Anniversary = () => {
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    getRelationshipStatus()
+      .then((data) => {
+        if (active) setStatus(data);
+      })
+      .catch(() => {
+        if (active) {
+          setStatus({
+            anniversary: { ...getAnniversaryInfo(), yearCount: 0 },
+            nextMonthsary: getNextMonthsary().toISOString()
+          });
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const anniversaryDate = new Date(new Date().getFullYear(), 11, 8);
+
+  if (anniversaryDate < new Date()) {
+    anniversaryDate.setFullYear(anniversaryDate.getFullYear() + 1);
+  }
 
   return (
-    <main className="page-shell">
-      <section className={isAnniversary ? "page-hero anniversary-page" : "page-hero compact"}>
-        <p className="eyebrow">Special dates</p>
-        <h1>{isAnniversary ? "Happy Anniversary" : "Anniversary System"}</h1>
-        <p>
-          December 8 activates yearly celebration mode. Every 8th day activates monthsary mode and
-          notification scheduling.
-        </p>
-      </section>
-
-      <section className="stats-grid">
-        <article className="glass-card stat-card">
-          <span>Days together</span>
-          <strong>{calculateDaysTogether()}</strong>
-        </article>
-        <article className="glass-card stat-card">
-          <span>Completed years</span>
-          <strong>{relationshipYears}</strong>
-        </article>
-        <article className="glass-card stat-card">
-          <span>Days to monthsary</span>
-          <strong>{daysUntilMonthsary}</strong>
-        </article>
-        <article className="glass-card stat-card">
-          <span>Current mode</span>
-          <strong>{isAnniversary ? "Anniversary" : isMonthsary ? "Monthsary" : "Archive"}</strong>
-        </article>
-      </section>
-
-      <section className="glass-card recap-card">
-        <p className="eyebrow">Recap ready</p>
-        <h2>Yearly memories can be filtered by date</h2>
-        <p>
-          The backend stores month keys and indexed dates across songs, messages, gallery photos,
-          memories, and timeline events. That keeps future anniversary recaps fast even when the
-          archive grows.
-        </p>
-      </section>
-    </main>
+    <section>
+      <header className="page-header">
+        <p className="eyebrow">Anniversary system</p>
+        <h1>Anniversary</h1>
+        <p>December 8 has a dedicated mode, yearly counter, recap area, and event countdowns.</p>
+      </header>
+      <div className="anniversary-grid">
+        <AnniversaryIntro
+          isAnniversary={Boolean(status?.anniversary?.isToday)}
+          yearCount={status?.anniversary?.yearCount || 0}
+        />
+        <CountdownTimer label="Next anniversary" targetDate={anniversaryDate.toISOString()} />
+        <CountdownTimer label="Next monthsary" targetDate={status?.nextMonthsary || getNextMonthsary().toISOString()} />
+        <TimeCapsule />
+      </div>
+    </section>
   );
-}
+};
+
+export default Anniversary;

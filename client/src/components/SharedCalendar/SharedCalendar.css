@@ -1,0 +1,33 @@
+.shared-calendar {
+  display: grid;
+  gap: 18px;
+}
+
+.shared-calendar h2 {
+  margin: 0;
+}
+
+.shared-calendar div {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.shared-calendar span {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  color: var(--text-soft);
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+}
+
+.shared-calendar strong {
+  color: var(--text-strong);
+}
+
+@media (max-width: 640px) {
+  .shared-calendar div {
+    grid-template-columns: 1fr;
+  }
+}

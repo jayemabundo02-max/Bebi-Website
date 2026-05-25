@@ -18,3 +18,13 @@ export const sampleGallery = [
     uploadDate: "2026-04-08T00:00:00.000Z"
   }
 ];
+export const fallbackGallery = [
+  {
+    _id: "gallery-fallback-1",
+    title: "First Gallery Memory",
+    caption: "Upload a photo to start your private album.",
+    imageUrl: "",
+    monthKey: "2026-05",
+    uploadDate: new Date().toISOString()
+  }
+];

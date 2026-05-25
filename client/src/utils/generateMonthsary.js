@@ -1,19 +1,14 @@
-export const getNextMonthsary = (fromDate = new Date()) => {
-  const next = new Date(fromDate);
-  next.setHours(0, 0, 0, 0);
+export const getNextMonthsary = (fromDate = new Date(), day = 8) => {
+  const now = new Date(fromDate);
+  const next = new Date(now.getFullYear(), now.getMonth(), day, 0, 0, 0, 0);
 
-  if (next.getDate() >= 8) {
+  if (next <= now) {
     next.setMonth(next.getMonth() + 1);
   }
 
-  next.setDate(8);
   return next;
 };
 
-export const getDaysUntilNextMonthsary = (fromDate = new Date()) => {
-  const start = new Date(fromDate);
-  start.setHours(0, 0, 0, 0);
-  const next = getNextMonthsary(start);
-
-  return Math.ceil((next - start) / 86400000);
+export const isMonthsaryToday = (fromDate = new Date(), day = 8) => {
+  return new Date(fromDate).getDate() === day;
 };
